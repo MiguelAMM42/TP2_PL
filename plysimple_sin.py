@@ -6,9 +6,9 @@ def p_Ps(p):
     "Ps : Lex Yacc"
 
 def p_Lex(p):
-    "Lex : INLEX NEWL Lit Ig Res States"# Tok Nline Error Eof Code"
-    #p[0] = 'import ply.lex as lex\n\n' + p[3] + 'tokens = ' + str(t.lexer.ltok) + '+ list(reserved.values())'
-    p[0] = '\n' + p[1] + '\n' + p[3] + '\n' + p[4] + '\n' + p[5] + '\n' + p[6]# + '\n' + p[9] + '\n' + p[10] + '\n' 
+    "Lex : INLEX NEWL Lit Ig Res States Tok Nline Error Eof Code"
+    p[0] = 'import ply.lex as lex\n\n' + p[3] + '\ntokens = ' + str(parser.ltok) + '+ list(reserved.values())'
+    p[0] +=  '\n' + p[4] + '\n' + p[5] + '\n' + p[6] + '\n' + p[7] + '\n' + p[8] + '\n' + p[9] + '\n' + p[10] + '\n' + p[11] 
     print(p[0])
     #criar o ficheiro
 
@@ -102,15 +102,16 @@ def p_States1_i(p):
 
 def p_StaE(p):
     "StaE : EXC DOISP Lsta NEWL"
+    p[0] = ''
     for elem in p[3]:
-        p[0] += '(\'' + elem + '\' , \'exclusive\'),'
+        p[0] += '(' + elem + ' , \'exclusive\'),'
     print("15")
     #return p
 
 def p_StaI(p):
     "StaI : INC DOISP Lsta NEWL"
     for elem in p[3]:
-        p[0] += '(\'' + elem + '\' , \'inclusive\'),'
+        p[0] += '(' + elem + ' , \'inclusive\'),'
     print("16")
     #return p
 
@@ -118,7 +119,7 @@ def p_StaE2(p):
     "StaE2 : EXC DOISP Lsta NEWL"
     p[0] = ''
     for elem in p[3]:
-        p[0] += '(\'' + elem + '\' , \'exclusive\'),'
+        p[0] += '(' + elem + ' , \'exclusive\'),'
     print("17")
     #return p
 
@@ -130,8 +131,9 @@ def p_StaE2_vazio(p):
 
 def p_StaI2(p):
     "StaI2 : INC DOISP Lsta NEWL"
+    p[0] = ''
     for elem in p[3]:
-        p[0] += '(\'' + elem + '\' , \'inclusive\'),'
+        p[0] += '(' + elem + ' , \'inclusive\'),'
     print("19")
     #return p
 
@@ -142,8 +144,8 @@ def p_StaI2_vazio(p):
     #return p
 
 def p_Lsta(p):
-    "Lsta : PEL ID PEL Lsta1"
-    p[0] = ['\'' + p[2] + '\''] + Lsta1
+    "Lsta : EXP Lsta1"
+    p[0] = [p[1]] + p[2]
     print("21")
     #return p
 
@@ -174,7 +176,7 @@ def p_Tokens(p):
     if p[3][0] == False :
         p[0] += p[3][1] + '\n'
     p[0] += p[5] + '\n' + p[6] + '\n'
-    p.lexer.ltok.append(p[1])
+    parser.ltok.append(p[1])
     print("25")
     #return p
 
@@ -186,7 +188,7 @@ def p_Tokens_vazio(p):
 
 def p_Ed_EXP(p):
     "Ed : EXP"
-    p[0] = (False, '\tr\'' + p[1] + '\'')
+    p[0] = (False, '\tr' + p[1])
     print("27")
     #return p
 
@@ -230,7 +232,7 @@ def p_Eof_vazio(p):
 
 def p_Codel(p):
     "Codel : TAB TEXT NEWL Codel"
-    p[0] = '\t' + p[2] + '\n' + p[3]
+    p[0] =  p[1]  + p[2] + '\n' + p[4]
     print("31")
     #return p
 
