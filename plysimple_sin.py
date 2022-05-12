@@ -2,14 +2,8 @@ import ply.yacc as yacc
 import sys
 from plysimple_lex import tokens
 
-#def p_Ps(p):
-#    "Ps : Lex Parse"
-
-
-states = (
-    ('id', 'inclusive')
-)
-
+def p_Ps(p):
+    "Ps : Lex Yacc"
 
 def p_Lex(p):
     "Lex : INLEX NEWL Lit Ig Res States"# Tok Nline Error Eof Code"
@@ -251,6 +245,54 @@ def p_Code(p):
     p[0] = p[3]
     print("33")
     #return p
+
+def p_Yacc(p):
+    "Yacc : INYACC NEWL Start Prec Gr Error Code"
+
+def p_Start(p):
+    "Start : START DOIP EXP"
+
+def p_Start_vazio(p):
+    "Start : "
+
+def p_Prec(p):
+    "Prec : PREC NEWL Prec1"
+
+def p_Prec1(p):
+    "Prec1 : Lid DOISP LR NEWL Prec1"
+
+def p_Prec1_vazio(p):
+    "Prec1 : "
+
+def p_Lid(p):
+    "Lid : PEL ID PEL Lid1"
+
+def p_Lid1(p):
+    "Lid1 : VIRG Lid"
+
+def p_Lid1_vazio(p):
+    "Lid1 : "
+
+def p_Gr(p):
+    "Gr : GRAM NEWL Elem"
+
+def p_Elem(p):
+    "Elem : ID SETA NEWL Elem1"
+
+def p_Elem1(p):
+    "Elem1 : TEXT Action NEWL Elem2"
+
+def p_Elem2(p):
+    "Elem2 : BARRA Elem1"
+
+def p_Elem2_vazio(p):
+    "Elem2 : "
+
+def p_Action(p):
+    "Action : CHAVE Code CHAVD"
+
+def p_Action_vazio(p):
+    "Action : "
 
 def p_error(p):
     print('Erro sintático: ', p)

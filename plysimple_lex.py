@@ -2,11 +2,12 @@ import ply.lex as lex
 
 
 
-tokens = ['NEWL','PEL','TAB','INLEX','LIT','IG','EXP','EXPL','ID','DOISP','VIRG','REG','RES','STA','EXC','INC','TOK','TEXT','CODE','ERROR','EOF','NLINE']
+tokens = ['NEWL','PEL','TAB','INLEX','INYACC','PREC','GRAM','SETA','START','BARRA','CHAVE','CHAVD','LR','LIT','IG','EXP','EXPL','ID','DOISP','VIRG','REG','RES','STA','EXC','INC','TOK','TEXT','CODE','ERROR','EOF','NLINE']
 
 states = (
     ('text','inclusive'),
-    ('id','inclusive')
+    ('prec','inclusive'),
+    ('gram','inclusive'),
 )
 
 t_ANY_ignore = ""
@@ -14,6 +15,11 @@ t_ANY_ignore = ""
 
 def t_INLEX(t):
     r'%%LEX'
+    print("ahhhhhhh inlex", t.value)
+    return t
+
+def t_INYACC(t):
+    r'%%YACC'
     print("ahhhhhhh inlex", t.value)
     return t
 
@@ -73,11 +79,48 @@ def t_EOF(t):
     print("artur", t.value)
     return t
 
+def t_START(t):
+	r'%start\s*:'
+	print("ahhhhhhhhh start", t.value)
+	return t
+
+def t_PREC(t):
+	r'%prec\s*:'
+	t.lexer.begin('prec')
+	print("ahhhhhhhhh prec", t.value)
+	return t
+
+def t_GRAM(t):
+	r'%grammar\s*:'
+	t.lexer.begin('gram')
+	print("ahhhhhhhhh gram", t.value)
+	return t
+
+def t_SETA(t):
+	r'->'
+	print("ahhhhhhhhhhhhhhh seta", t.value)
+	return t
+
 def t_ANY_NEWL(t):
     r'\n'
     t.lexer.begin('text')
     print("ahhhhhhhhhhhh newl", t.value)
     return t
+
+def t_gram_BARRA(t):
+	r'^\s*\|'
+	print("ahhhhhhhhhhhh barra", t.value)
+	return t
+
+def t_gram_CHAVE(t):
+	r'{'
+	print("ahhhhhhhhhhhh chavE", t.value)
+	return t
+
+def t_gram_CHAVD(t):
+	r'}'
+	print("ahhhhhhhhhhhh chavD", t.value)
+	return t
 
 def t_text_TAB(t):
     r'\s+'
@@ -89,6 +132,11 @@ def t_ID(t):
     r'[_A-Z]+'
     print("ahhhhhhh id", t.value)
     return t
+
+def t_prec_LR(t):
+	r'[a-z]+'
+	print("ahhhhhhh lr", t.value)
+	return t
 
 def t_DOISP(t):
     r':'
