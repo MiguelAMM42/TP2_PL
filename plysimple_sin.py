@@ -6,10 +6,15 @@ from plysimple_lex import tokens
 #    "Ps : Lex Parse"
 
 
+states = (
+    ('id', 'inclusive')
+)
+
+
 def p_Lex(p):
-    "Lex : INLEX NEWL Lit Ig Res States Tok Nline Error Eof Code"
-    p[0] = 'import ply.lex as lex\n\n' + p[3] + 'tokens = ' + str(t.lexer.ltok) + '+ list(reserved.values())'
-    p[0] += '\n' + p[6] + '\n' + p[4] + '\n' + p[5] + '\n' + p[7] + '\n' + p[8] + '\n' + p[9] + '\n' + p[10] + '\n' 
+    "Lex : INLEX NEWL Lit Ig Res States"# Tok Nline Error Eof Code"
+    #p[0] = 'import ply.lex as lex\n\n' + p[3] + 'tokens = ' + str(t.lexer.ltok) + '+ list(reserved.values())'
+    p[0] = '\n' + p[1] + '\n' + p[3] + '\n' + p[4] + '\n' + p[5] + '\n' + p[6]# + '\n' + p[9] + '\n' + p[10] + '\n' 
     print(p[0])
     #criar o ficheiro
 
@@ -26,7 +31,7 @@ def p_Lit_vazio(p):
 
 def p_Ig(p):
     "Ig : IG DOISP EXP NEWL Defig"
-    p[0] = 't_ignore = ' + EXP + '\n' + p[5]
+    p[0] = 't_ignore = ' + p[3] + '\n' + p[5]
     print("3")
     #return p
 
@@ -37,8 +42,8 @@ def p_Ig_vazio(p):
     #return p
 
 def p_Defig(p):
-    "Defig : TAB ID DOISP REG NEWL Defig"
-    p[0] = "t_ignore_" + p[2] + '=' + p[4] + '\n' + p[6]
+    "Defig : ID DOISP EXP NEWL Defig"
+    p[0] = "t_ignore_" + p[1] + '=' + p[3] + '\n' + p[5]
     print("5")
     #return p
 
@@ -50,7 +55,7 @@ def p_Defig_vazio(p):
 
 def p_Res(p):
     "Res : RES NEWL Defres"
-    p[0] = "reserved = {\n"
+    p[0] = "reserved = {\n" + p[3]
     print("7")
     #return p
 
@@ -117,6 +122,7 @@ def p_StaI(p):
 
 def p_StaE2(p):
     "StaE2 : EXC DOISP Lsta NEWL"
+    p[0] = ''
     for elem in p[3]:
         p[0] += '(\'' + elem + '\' , \'exclusive\'),'
     print("17")
