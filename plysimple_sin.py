@@ -108,15 +108,16 @@ def p_States1_i(p):
 
 def p_StaE(p):
     "StaE : EXC DOISP Lsta NEWL"
+    p[0] = ''
     for elem in p[3]:
-        p[0] += '(\'' + elem + '\' , \'exclusive\'),'
+        p[0] += '(' + elem + ' , \'exclusive\'),'
     print("15")
     #return p
 
 def p_StaI(p):
     "StaI : INC DOISP Lsta NEWL"
     for elem in p[3]:
-        p[0] += '(\'' + elem + '\' , \'inclusive\'),'
+        p[0] += '(' + elem + ' , \'inclusive\'),'
     print("16")
     #return p
 
@@ -124,7 +125,7 @@ def p_StaE2(p):
     "StaE2 : EXC DOISP Lsta NEWL"
     p[0] = ''
     for elem in p[3]:
-        p[0] += '(\'' + elem + '\' , \'exclusive\'),'
+        p[0] += '(' + elem + ' , \'exclusive\'),'
     print("17")
     #return p
 
@@ -136,8 +137,9 @@ def p_StaE2_vazio(p):
 
 def p_StaI2(p):
     "StaI2 : INC DOISP Lsta NEWL"
+    p[0] = ''
     for elem in p[3]:
-        p[0] += '(\'' + elem + '\' , \'inclusive\'),'
+        p[0] += '(' + elem + ' , \'inclusive\'),'
     print("19")
     #return p
 
@@ -148,8 +150,8 @@ def p_StaI2_vazio(p):
     #return p
 
 def p_Lsta(p):
-    "Lsta : PEL ID PEL Lsta1"
-    p[0] = ['\'' + p[2] + '\''] + Lsta1
+    "Lsta : EXP Lsta1"
+    p[0] = [p[1]] + p[2]
     print("21")
     #return p
 
