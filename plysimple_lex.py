@@ -2,7 +2,7 @@ import ply.lex as lex
 
 
 
-tokens = ['NEWL','PEL','TAB','INLEX','INYACC','PREC','GRAM','SETA','START','BARRA','CHAVE','CHAVD','LR','LIT','IG','EXP','EXPL','ID','DOISP','VIRG','REG','RES','STA','EXC','INC','TOK','TEXT','CODE','ERROR','EOF','NLINE']
+tokens = ['NEWL','PEL','TAB','INLEX','INYACC','PREC','GRAM','SETA','START','BARRA','CHAVE','CHAVD','LR','LIT','IG','EXP','EXPL','ID','DOISP','VIRG','RES','STA','EXC','INC','TOK','TEXT','CODE','ERROR','EOF','NLINE']
 
 states = (
     ('text','inclusive'),
@@ -20,7 +20,8 @@ def t_INLEX(t):
 
 def t_INYACC(t):
     r'%%YACC'
-    print("ahhhhhhh inlex", t.value)
+    t.lexer.begin('INITIAL')
+    print("ahhhhhhh inyacc", t.value)
     return t
 
 def t_IG(t):
@@ -87,7 +88,7 @@ def t_START(t):
 def t_PREC(t):
 	r'%prec\s*:'
 	t.lexer.begin('prec')
-	print("ahhhhhhhhh prec", t.value)
+	print("ahhhhhhhhh prec", t.value,t.lexer.lexstate)
 	return t
 
 def t_GRAM(t):
@@ -102,10 +103,11 @@ def t_SETA(t):
 	return t
 
 def t_ANY_NEWL(t):
-    r'\n'
-    t.lexer.begin('text')
-    print("ahhhhhhhhhhhh newl", t.value)
-    return t
+	r'\n'
+	if t.lexer.lexstate != 'prec':
+		t.lexer.begin('text')
+	print("ahhhhhhhhhhhh newl", t.value)
+	return t
 
 def t_gram_BARRA(t):
 	r'^\s*\|'
@@ -121,6 +123,12 @@ def t_gram_CHAVD(t):
 	r'}'
 	print("ahhhhhhhhhhhh chavD", t.value)
 	return t
+
+def t_gram_TAB(t):
+    r'\s+'
+    t.lexer.begin('INITIAL')
+    print("ahhhhhhhhhhhh tab", t.value)
+    return t
 
 def t_text_TAB(t):
     r'\s+'
@@ -140,12 +148,12 @@ def t_prec_LR(t):
 
 def t_DOISP(t):
     r':'
-    print("ahhhhhh doisp", t.value)
+    print("ahhhhhh doisp", t.value,t.lexer.lexstate)
     return t
 
 def t_VIRG(t):
     r','
-    print("ahhhhhh virg", t.value)
+    print("ahhhhhh virg", t.value,t.lexer.lexstate)
     return t
 
 def t_EXPL(t):
@@ -155,7 +163,7 @@ def t_EXPL(t):
 
 def t_EXP(t):
     r'\'(\\\'|[^\'])+\''
-    print("ahhhhhhhhh exp", t.value)
+    print("ahhhhhhhhh exp", t.value,t.lexer.lexstate)
     return t
 
 def t_PEL(t):
@@ -165,7 +173,7 @@ def t_PEL(t):
 
 def t_TEXT(t):
     r'.+'
-    print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh text", t.value)
+    print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh text", t.value,t.lexer.lexstate)
     return t
 
 def t_ANY_error(t):
