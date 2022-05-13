@@ -237,7 +237,10 @@ def p_End_vazio(p):
 #
 def p_Codel(p):
     "Codel : TAB TEXT NEWL Codel"
-    p[0] =  p[1] + p[2] + '\n' + p[4]
+    if parser.isCode:
+        p[0] =  p[1][:-4] + p[2] + '\n' + p[4]
+    else :
+        p[0] =  p[1][:-4] + p[2] + '\n' + p[4] 
     print("31")
 
 def p_Codel_vazio(p):
@@ -247,7 +250,7 @@ def p_Codel_vazio(p):
 
 def p_Code(p):
     "Code : CODE NEWL Codel"
-    parser.isCode = False
+    parser.isCode = False 
     print(parser.isCode)
     p[0] = p[3]
     print("33")
@@ -302,15 +305,15 @@ def p_Code(p):
 #def p_Elem(p):
 #    "Elem : ID SETA NEWL Elem1"
 #    global nome
+#    global ordem
+#    ordem = 0
 #    nome = p[1]
 #    p[0] = p[4]
 #
 #def p_Elem1(p):
 #    "Elem1 : TEXT Action NEWL Elem2"
 #    global buf
-#    global ordem
 #    buf = buf.append(p[1])
-#    ordem += 1
 #    p[0] = p[2] + p[4]
 #
 #def p_Elem2(p):
@@ -336,16 +339,16 @@ def p_Code(p):
 #        p[0] += '\t\'\'\''
 #    buf = []
 #    nome = ''
-#    ordem = 0
+#    ordem += 1
 #    p[0] += '\n' + p[2]
 #
 #def p_Action_vazio(p):
 #    "Action : "
 #    p[0] = ''
-
-def p_error(p):
-    print('Erro sintático: ', p)
-    parser.success = False
+#
+#def p_error(p):
+#    print('Erro sintático: ', p)
+#    parser.success = False
 
 
 #Build the parser
