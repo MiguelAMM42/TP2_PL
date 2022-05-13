@@ -103,7 +103,7 @@ def t_SETA(t):
 	return t
 
 def t_ANY_NEWL(t):
-	r'\n'
+	r'\n+'
 	if t.lexer.lexstate != 'prec':
 		t.lexer.begin('text')
 	print("ahhhhhhhhhhhh newl", t.value)
@@ -123,6 +123,12 @@ def t_gram_CHAVD(t):
 	r'}'
 	print("ahhhhhhhhhhhh chavD", t.value)
 	return t
+
+
+def t_ANY_DOISP(t):
+    r'\s*:\s*'
+    print("ahhhhhh doisp", t.value,t.lexer.lexstate)
+    return t
 
 def t_gram_TAB(t):
     r'\s+'
@@ -146,10 +152,6 @@ def t_prec_LR(t):
 	print("ahhhhhhh lr", t.value)
 	return t
 
-def t_DOISP(t):
-    r':'
-    print("ahhhhhh doisp", t.value,t.lexer.lexstate)
-    return t
 
 def t_VIRG(t):
     r','
