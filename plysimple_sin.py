@@ -191,15 +191,15 @@ ordem = 0
 #    p[0] = ''
 #    print("28,75")
 #
-#def p_Error(p):
-#    "Error : ERROR NEWL Codel"
-#    p[0] = 't_error(t):\n' + p[3]
-#    print("29")
-#
-#def p_Error_vazio(p):
-#    "Error : "
-#    p[0] = ''
-#    print('29,5')
+def p_Error(p):
+    "Error : ERROR NEWL Codel"
+    p[0] = 't_error(t):\n' + p[3]
+    print("29")
+
+def p_Error_vazio(p):
+    "Error : "
+    p[0] = ''
+    print('29,5')
 #
 #def p_Eof(p):
 #    "Eof : EOF NEWL Codel"
@@ -286,15 +286,15 @@ def p_Elems_vazio(p):
 def p_Elem(p):
     "Elem : ID SETA NEWL Elem1"
     global nome
+    global ordem
+    ordem = 0
     nome = p[1]
     p[0] = p[4]
 
 def p_Elem1(p):
     "Elem1 : TEXT Action NEWL Elem2"
     global buf
-    global ordem
     buf = buf.append(p[1])
-    ordem += 1
     p[0] = p[2] + p[4]
 
 def p_Elem2(p):
@@ -320,7 +320,7 @@ def p_Action(p):
         p[0] += '\t\'\'\''
     buf = []
     nome = ''
-    ordem = 0
+    ordem += 1
     p[0] += '\n' + p[2]
 
 def p_Action_vazio(p):
