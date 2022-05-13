@@ -240,7 +240,7 @@ def p_Codel(p):
     if parser.isCode:
         p[0] =  p[1][:-4] + p[2] + '\n' + p[4]
     else :
-        p[0] =  p[1][:-4] + p[2] + '\n' + p[4] 
+        p[0] =  p[1] + p[2] + '\n' + p[4] 
     print("31")
 
 def p_Codel_vazio(p):
