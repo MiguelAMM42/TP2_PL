@@ -4,15 +4,14 @@ from plysimple_lex import tokens
 
 halits = False
 buf = []
-nome = ''
 ordem = 0
 
 
-#def p_Ps(p):
-#    "Ps : Lex NEWL Yacc"
-#    print(p[1])
-#    #juntar os ficheiros
-
+def p_Ps(p):
+    "Ps : Lex Yacc"
+    print(p[1])
+    #juntar os ficheiros
+    
 def p_Lex(p):
     "Lex : INLEX NEWL Lit Ig Res States Tok Nline Error Eof Code End"
     p[0] = 'import ply.lex as lex\n\n' + p[3] + '\ntokens = ' + str(parser.ltok)
@@ -194,15 +193,6 @@ def p_Nline_vazio(p):
     p[0] = ''
     print("28,75")
 
-def p_Error(p):
-    "Error : ERROR NEWL Codel"
-    p[0] = 'def t_error(t):\n' + p[3]
-    print("29")
-
-def p_Error_vazio(p):
-    "Error : "
-    p[0] = ''
-    print('29,5')
 
 def p_Eof(p):
     "Eof : EOF NEWL Codel"
@@ -216,139 +206,199 @@ def p_Eof_vazio(p):
     p[0] = ''
     print('30,5')
     
+
+
+def p_Yacc(p):
+    "Yacc : INYACC NEWL Start Prec Gr Error Code"
+    global halits
+    p[0] = 'import ply.yacc as yacc\nimport sys\nfrom plysimple_lex import tokens'
+    if halits == True:
+        p[0] += ',literals'
+    p[0] += '\n\n' + p[3] + '\n' + p[4] + '\n' + p[5] + '\n' + p[6] +  '\n' + p[7]
+    print(p[0])
+    #escrever para ficheiro
+    
+def p_Error(p):
+    "Error : ERROR NEWL Codel"
+    p[0] = 'def t_error(t):\n' + p[3]
+    parser.isCode = True
+   # print("29")
+
+def p_Error_vazio(p):
+    "Error : "
+    parser.isCode = True
+    p[0] = ''
+   # print('29,5')
+
 def p_End_enter(p):
     "End : NEWL End"
+    #print("end1")
     
 def p_End_tab(p):
     "End : TAB End"
+    #print("end2")
     
 def p_End_vazio(p):
     "End : "
-
-#def p_Yacc(p):
-#    "Yacc : INYACC NEWL Start NEWL Prec Gr Error Code"
-#    global halits
-#    p[0] = 'import ply.yacc as yacc\nimport sys\nfrom plysimple_lex import tokens'
-#    if halits == True:
-#        p[0] += ',literals'
-#    p[0] += '\n\n' + p[3]
-#    print(p[0])
-#    #escrever para ficheiro
-#
+    #print("end3")
+    
 def p_Codel(p):
     "Codel : TAB TEXT NEWL Codel"
     if parser.isCode:
         p[0] =  p[1][:-4] + p[2] + '\n' + p[4]
     else :
         p[0] =  p[1] + p[2] + '\n' + p[4] 
-    print("31")
+    #print("31")
 
 def p_Codel_vazio(p):
     "Codel : "
     p[0] = ''
-    print("32")
+    #print("32")
 
 def p_Code(p):
     "Code : CODE NEWL Codel"
     parser.isCode = False 
-    print(parser.isCode)
+    #print(parser.isCode)
     p[0] = p[3]
-    print("33")
-#
-#def p_Start(p):
-#    "Start : START EXP"
-#    p[0] = 'start =' + p[2]
-#
-#def p_Start_vazio(p):
-#    "Start : "
-#    p[0] = []
-#
-#def p_Prec(p):
-#    "Prec : PREC NEWL Prec1"
-#    if p[3] == '':
-#        p[0] = p[3]
-#    else:
-#        p[0] = 'precedence = (\n' + p[3] + ')\n' 
-#
-#def p_Prec1(p):
-#    "Prec1 : Lid DOISP LR NEWL Prec1"
-#    p[0] = '\t(\'' + p[3] + '\'' + p[1] + '),\n' + p[5]
-#
-#def p_Prec1_vazio(p):
-#    "Prec1 : "
-#    p[0] = ''
-#
-#def p_Lid(p):
-#    "Lid : EXP Lid1"
-#    p[0] = ', ' +  p[1] + p[2]
-#
-#def p_Lid1(p):
-#    "Lid1 : VIRG Lid"
-#    p[0] = p[2]
-#
-#def p_Lid1_vazio(p):
-#    "Lid1 : "
-#    p[0] = ''
-#
-#def p_Gr(p):
-#    "Gr : GRAM NEWL Elems"
-#    p[0] = '\n' + p[3]
-#
-#def p_Elems(p):
-#    "Elems : Elem Elems"
-#    p[0] = p[1] + p[2]
-#
-#def p_Elems_vazio(p):
-#    "Elems : "
-#    p[0] = ''
-#
-#def p_Elem(p):
-#    "Elem : ID SETA NEWL Elem1"
-#    global nome
-#    global ordem
-#    ordem = 0
-#    nome = p[1]
-#    p[0] = p[4]
-#
-#def p_Elem1(p):
-#    "Elem1 : TEXT Action NEWL Elem2"
-#    global buf
-#    buf = buf.append(p[1])
-#    p[0] = p[2] + p[4]
-#
-#def p_Elem2(p):
-#    "Elem2 : TAB BARRA Elem1"
-#    p[0] = p[3]
-#
-#def p_Elem2_vazio(p):
-#    "Elem2 : "
-#    p[0] = ''
-#
-#def p_Action(p):
-#    "Action : CHAVE Code CHAVD"
-#    global buf
-#    global nome
-#    global ordem
-#    p[0] = 'def t_' + nome + '_' + ordem + '(t):\n' + p[4]
-#    if buf.len == 1:
-#        p[0] += '\t\'' + buf[0] + '\''
-#    else:
-#        p[0] = '\t\'\'\''
-#        for line in buf:
-#            p[0] += '\t\t|' + line
-#        p[0] += '\t\'\'\''
-#    buf = []
-#    nome = ''
-#    ordem += 1
-#    p[0] += '\n' + p[2]
-#
-#def p_Action_vazio(p):
-#    "Action : "
-#    p[0] = ''
-#
-#def p_error(p):
-#    print('Erro sintático: ', p)
-#    parser.success = False
+    #print("33")
+    
+def p_Start(p):
+    "Start : START EXP NEWL"
+    p[0] = 'start =' + p[2]
+
+def p_Start_vazio(p):
+    "Start : "
+    p[0] = ''
+
+def p_Prec(p):
+    "Prec : PREC NEWL Prec1"
+    if p[3] == '':
+        p[0] = p[3]
+    else:
+        p[0] = 'precedence = (\n' + p[3] + ')\n' 
+        
+def p_Prec_vazio(p):
+    "Prec : "
+    p[0] = ''
+
+def p_Prec1(p):
+    "Prec1 : Lid DOISP LR NEWL Prec1"
+    p[0] = '\t(\'' + p[3] + '\'' + p[1] + '),\n' + p[5]
+
+def p_Prec1_vazio(p):
+    "Prec1 : "
+    p[0] = ''
+
+def p_Lid(p):
+    "Lid : EXP Lid1"
+    p[0] = ', ' +  p[1] + p[2]
+
+def p_Lid1(p):
+    "Lid1 : VIRG Lid"
+    p[0] = p[2]
+
+def p_Lid1_vazio(p):
+    "Lid1 : "
+    p[0] = ''
+
+def p_Gr(p):
+    "Gr : GRAM NEWL Elems"
+    p[0] = '\n' + p[3]
+   # print("50")
+
+def p_Elems(p):
+    "Elems : Elem Elems"
+    p[0] = p[1] + p[2]
+    print("51")
+
+def p_Elems_vazio(p):
+    "Elems : "
+    p[0] = ''
+   # print("52")
+
+def p_Elem(p):
+    "Elem : ID SETA Elem1"
+    p[0] = ''
+    global buf
+    global ordem
+    for i in range(len(buf)) :
+        p[0] += 'def t_' + p[1] + '_' + str(i) + '(t):\n' + buf[len(buf)- i - 1] + '\n'
+    p[0] += '\n'
+    global nome
+    ordem = 0
+    buf = []
+    nome = p[1]
+   # p[0] = p[3]
+   # print("53")
+
+def p_Elem1(p):
+    "Elem1 : TEXT Action NEWL Elem2"
+    global buf
+    global ordem
+    p[0] = '    ' + p[1] + '\n' + p[2]
+    buf.append(p[0])
+    ordem += 1
+    p[0] = p[2] + p[4]
+    #print("54")
+
+def p_Elem2(p):
+    "Elem2 : TAB BARRA Elem1"
+    p[0] = p[3]
+    #print("55")
+
+def p_Elem2_vazio(p):
+    "Elem2 : "
+    p[0] = ''
+   # print("56")
+
+def p_Action(p):
+    "Action : CHAVE CodeG CHAVD"
+    global buf
+    global nome
+    global ordem
+    p[0] = p[2]
+    print(buf)
+   # p[0] = 'def t_' + nome + '_' + str(ordem) + '(t):\n' 
+   # if len(buf) == 1:
+   #     p[0] += '\t\'' + buf[0] + '\''
+   # else:
+   #     p[0] += '\t\'\'\''
+   #     for line in buf:
+   #         p[0] += '\t\t|' + line
+   #     p[0] += '\t\'\'\''
+   # buf = []
+   # nome = ''
+   # ordem += 1
+   # p[0] += '\n' + p[2]
+    #print("57")
+
+def p_Action_vazio(p):
+    "Action : "
+    p[0] = ''
+    
+def p_CodeG(p):
+    "CodeG : TEXT CodeG2"
+    p[0] = '    ' + p[1] + p[2]
+    #print("31")
+
+def p_CodeG_vazio(p):
+    "CodeG : "
+    p[0] = ''
+    #print("32")
+    
+def p_CodeG2(p):
+    "CodeG2 : NEWL Codel"
+    p[0] = p[2]
+    #print("60")
+    
+def p_CodeG2_vazio(p):
+    "CodeG2 : "
+    p[0] = ''
+    #print("61")
+    
+def p_error(p):
+    print('Erro sintático: ', p)
+    parser.success = False
 
 
 #Build the parser
