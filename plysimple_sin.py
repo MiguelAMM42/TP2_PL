@@ -215,7 +215,7 @@ def p_Eof_vazio(p):
 def p_Yacc(p):
     "Yacc : INYACC NEWL Start Prec Gr Error Code"
     global halits
-    p[0] = 'import ply.yacc as yacc\nimport sys\nfrom plysimple_lex import tokens'
+    p[0] = 'import ply.yacc as yacc\nimport sys\nfrom plySimpleOut_lex import tokens'
     if halits == True:
         p[0] += ',literals'
     p[0] += '\n\n' + p[3] + '\n' + p[4] + '\n' + p[5] + '\n' + p[6] +  '\n' + p[7]
@@ -224,7 +224,11 @@ def p_Yacc(p):
     
 def p_Error(p):
     "Error : ERROR NEWL Codel"
-    p[0] = 'def t_error(t):\n' + p[3]
+    if parser.inYacc : 
+        p[0] = 'def p_error(p):\n' + p[3]
+    else :
+        p[0] = 'def t_error(t):\n' + p[3]
+    parser.inYacc = True
     parser.isCode = True
    # print("29")
 
@@ -326,7 +330,7 @@ def p_Elem(p):
     global buf
     global ordem
     for i in range(len(buf)) :
-        p[0] += 'def t_' + p[1] + '_' + str(i) + '(t):\n' + buf[len(buf)- i - 1] + '\n'
+        p[0] += 'def p_' + p[1] + '_' + str(i) + '(p):\n' + '    "' + p[1] + ' : ' + buf[len(buf)- i - 1] + '\n'
     p[0] += '\n'
     global nome
     ordem = 0
@@ -336,10 +340,10 @@ def p_Elem(p):
    # print("53")
 
 def p_Elem1(p):
-    "Elem1 : TEXT Action NEWL Elem2"
+    "Elem1 : TEXTA Action NEWL Elem2"
     global buf
     global ordem
-    p[0] = '    ' + p[1] + '\n' + p[2]
+    p[0] = p[1] + '"\n' + p[2]
     buf.append(p[0])
     ordem += 1
     p[0] = p[2] + p[4]
@@ -410,6 +414,7 @@ parser = yacc.yacc()
 parser.ltok = []
 parser.isCode = False
 parser.hasReserved = False
+parser.inYacc = False
 
 
 #Read line from input and parse it

@@ -2,7 +2,7 @@ import ply.lex as lex
 
 
 
-tokens = ['NEWL','PEL','TAB','INLEX','INYACC','PREC','GRAM','SETA','START','BARRA','CHAVE','CHAVD','LR','LIT','IG','EXP','EXPL','ID','DOISP','VIRG','RES','STA','EXC','INC','TOK','TEXT','CODE','ERROR','EOF','NLINE']
+tokens = ['NEWL','PEL','TAB','INLEX','INYACC','PREC','GRAM','SETA','START','BARRA','CHAVE','CHAVD','LR','LIT','IG','EXP','EXPL','ID','DOISP','VIRG','RES','STA','EXC','INC','TOK','TEXT','TEXTA','CODE','ERROR','EOF','NLINE']
 
 states = (
     ('text','inclusive'),
@@ -71,8 +71,9 @@ def t_NLINE(t):
     #print("ahhhhhh nline", t.value)
     return t
 
-def t_ERROR(t):
+def t_ANY_ERROR(t):
     r'%error\s*:'
+    t.lexer.begin('INITIAL')
     #print("ahhhhhh error", t.value)
     return t
 
@@ -134,7 +135,7 @@ def t_ANY_DOISP(t):
 
 def t_gram_TAB(t):
     r'\s+'
-    #print("ahhhhhhhhhhhh tabg", t.value)
+    print("ahhhhhhhhhhhh tabg", t.value)
     return t
 
 def t_text_TAB(t):
@@ -163,7 +164,7 @@ def t_prec_LR(t):
 
 
 def t_VIRG(t):
-    r','
+    r'\s*,\s*'
     #print("ahhhhhh virg", t.value,t.lexer.lexstate)
     return t
 
@@ -182,9 +183,20 @@ def t_PEL(t):
     #print("ahhhhhhhhhh aspinha", t.value)
     return t
 
+def t_gram_TEXTA(t):
+    r'(?:\")[^|](([^{}])|(\'{\')|(\'}\'))+(?:\")\s*'
+    pos = 0
+    for i in range(len(t.value)):
+        if t.value[len(t.value)-i-1] == '"':
+            pos = i
+            break
+    t.value = t.value[1:-pos-1]
+    print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh atext", t.value,t.lexer.lexstate)
+    return t
+
 def t_gram_TEXT(t):
     r'[^|](([^{}])|(\'{\')|(\'}\'))+'
-    #print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh gtext", t.value,t.lexer.lexstate)
+    print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh gtext", t.value,t.lexer.lexstate)
     return t
 
 def t_TEXT(t):
