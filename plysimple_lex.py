@@ -89,60 +89,60 @@ def t_START(t):
 def t_PREC(t):
 	r'%prec\s*:'
 	t.lexer.begin('prec')
-	print("ahhhhhhhhh prec", t.value,t.lexer.lexstate)
+	#print("ahhhhhhhhh prec", t.value,t.lexer.lexstate)
 	return t
 
 def t_GRAM(t):
 	r'%grammar\s*:'
 	t.lexer.begin('gram')
-	print("ahhhhhhhhh gram", t.value)
+	#print("ahhhhhhhhh gram", t.value)
 	return t
 
 def t_ANY_SETA(t):
 	r'\s*->\s*'
-	print("ahhhhhhhhhhhhhhh seta", t.value)
+	#print("ahhhhhhhhhhhhhhh seta", t.value)
 	return t
 
 def t_ANY_NEWL(t):
     r'\n+'
     if t.lexer.lexstate != 'prec' and t.lexer.lexstate != 'gram':
-        print(t.lexer.lexstate)
+       # print(t.lexer.lexstate)
         t.lexer.begin('text')
-    print("ahhhhhhhhhhhh newl", t.value)
+    #print("ahhhhhhhhhhhh newl", t.value)
     return t
 
 def t_gram_BARRA(t):
 	r'\|\s*'
-	print("ahhhhhhhhhhhh barra", t.value)
+	#print("ahhhhhhhhhhhh barra", t.value)
 	return t
 
 def t_gram_CHAVE(t):
 	r'{\s*'
-	print("ahhhhhhhhhhhh chavE", t.value)
+	#print("ahhhhhhhhhhhh chavE", t.value)
 	return t
 
 def t_gram_CHAVD(t):
 	r'\s*}'
-	print("ahhhhhhhhhhhh chavD", t.value)
+	#print("ahhhhhhhhhhhh chavD", t.value)
 	return t
 
 
 def t_ANY_DOISP(t):
     r'\s*:\s*'
-    print("ahhhhhh doisp", t.value,t.lexer.lexstate)
+    #print("ahhhhhh doisp", t.value,t.lexer.lexstate)
     return t
 
 def t_gram_TAB(t):
     r'\s+'
-    print("ahhhhhhhhhhhh tabg", t.value)
+    #print("ahhhhhhhhhhhh tabg", t.value)
     return t
 
 def t_text_TAB(t):
     r'\s+'
     if t.lexer.lexstate != 'gram' :
-        print("DJFOISJFIODJFIOSDJFIOSDJFIODJSSIODFJIODSJFIOSDJIOJFDSIOFJO\n\n\n", t.lexer.lexstate)
+        #print("DJFOISJFIODJFIOSDJFIOSDJFIODJSSIODFJIODSJFIOSDJIOJFDSIOFJO\n\n\n", t.lexer.lexstate)
         t.lexer.begin('INITIAL')
-    print("ahhhhhhhhhhhh tab", t.value)
+    #print("ahhhhhhhhhhhh tab", t.value)
     return t
 
 
@@ -153,7 +153,7 @@ def t_gram_ID(t):
 
 def t_ANY_ID(t):
     r'[_A-Z]+'
-    print("ahhhhhhh id", t.value)
+    #print("ahhhhhhh id", t.value)
     return t
 
 def t_prec_LR(t):
@@ -184,12 +184,12 @@ def t_PEL(t):
 
 def t_gram_TEXT(t):
     r'[^|](([^{}])|(\'{\')|(\'}\'))+'
-    print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh gtext", t.value,t.lexer.lexstate)
+    #print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh gtext", t.value,t.lexer.lexstate)
     return t
 
 def t_TEXT(t):
     r'.+'
-    print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh text", t.value,t.lexer.lexstate)
+    #print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh text", t.value,t.lexer.lexstate)
     return t
 
 def t_ANY_error(t):
