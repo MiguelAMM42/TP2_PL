@@ -15,11 +15,11 @@ def p_Ps(p):
         f.write(p[2])
     
 def p_Lex(p):
-    "Lex : INLEX NEWL Lit Ig Res States Tok Nline Error Eof Code End"
-    p[0] = 'import ply.lex as lex\n\n' + p[3] + '\ntokens = ' + str(parser.ltok)
+    "Lex : INLEX NEWL Lit Ig Res States Tok Nline Eof Error  Code End"
+    p[0] = 'import ply.lex as lex\n\n' + p[3] + '\n' + p[5]+ '\ntokens = ' + str(parser.ltok)
     if parser.hasReserved:
         p[0] += '+ list(reserved.values())'
-    p[0] +=  '\n' + p[4] + '\n' + p[5] + '\n' + p[6] + '\n' + p[7] + '\n' + p[8] + '\n' + p[9] + '\n' + p[10] + '\n' + p[11] 
+    p[0] +=  '\n' + p[4] + '\n' +  '\n' + p[6] + '\n' + p[7] + '\n' + p[8] + '\n' + p[9] + '\n' + p[10] + '\n' + p[11] 
 
 def p_Lit(p):
     "Lit : LIT DOISP EXPL NEWL"
@@ -92,6 +92,7 @@ def p_StaE(p):
 
 def p_StaI(p):
     "StaI : INC DOISP Lsta NEWL"
+    p[0] = ''
     for elem in p[3]:
         p[0] += '(' + elem + ' , \'inclusive\'),'
 
@@ -132,20 +133,30 @@ def p_Tok(p):
     p[0] = p[3]
 
 def p_Tokens(p):
-    "Tokens : ID DOISP Ed NEWL Codel Tokens"
+    "Tokens : ID DOISP Ed State NEWL Codel Tokens"
     p[0] = ''
     if p[3][0] == True : #decorator
         p[0] += '@TOKEN(' + p[3][1] + ')\n'
-    p[0] += 'def t_' + p[1] + '(t):\n'
+    p[0] += 'def t_' + p[4] + p[1] + '(t):\n'
     if p[3][0] == False :
         p[0] += p[3][1] + '\n'
-    p[0] += p[5] + '\n' + p[6] + '\n'
+    p[0] += p[6] + '\n' + p[7] + '\n'
     parser.ltok.append(p[1])
+    
+
 
 def p_Tokens_vazio(p):
     "Tokens : "
     p[0] = ''
 
+def p_State(p):
+    "State : STATE"
+    p[0] = p[1].rsplit(')',1)[0].split('(',1)[1] + '_'
+    
+def p_State_vazio(p):
+    "State : "
+    p[0] = ''
+    
 def p_Ed_EXP(p):
     "Ed : EXP"
     p[0] = (False, '    r' + p[1])
@@ -165,12 +176,12 @@ def p_Nline_vazio(p):
 
 def p_Eof(p):
     "Eof : EOF NEWL Codel"
-    parser.isCode = True
-    p[0] = 't_eof(t):\n' + p[3]
+    #parser.isCode = True
+    p[0] = 'def t_eof(t):\n' + p[3]
 
 def p_Eof_vazio(p):
     "Eof : "
-    parser.isCode = True
+    #parser.isCode = True
     p[0] = ''
     
 
@@ -184,11 +195,11 @@ def p_Yacc(p):
     p[0] += '\n\n' + p[3] + '\n' + p[4] + '\n' + p[5] + '\n' + p[6] +  '\n' + p[7]
     
 def p_Error(p):
-    "Error : ERROR NEWL Codel"
+    "Error : ERROR State NEWL Codel"
     if parser.inYacc : 
-        p[0] = 'def p_error(p):\n' + p[3]
+        p[0] = 'def p_error(p):\n' + p[4]
     else :
-        p[0] = 'def t_error(t):\n' + p[3]
+        p[0] = 'def t_error(t):\n' + p[4]
     parser.inYacc = True
     parser.isCode = True
 
@@ -278,20 +289,40 @@ def p_Elem(p):
     p[0] = ''
     global buf
     for i in range(len(buf)) :
-        p[0] += 'def p_' + p[1] + '_' + str(i) + '(p):\n' + '    "' + p[1] + ' : ' + buf[len(buf)- i - 1] + '\n'
+        aspas = '"'
+        if buf[len(buf) -i - 1][1] == True:
+            aspas = '"""'
+        p[0] += 'def p_' + p[1] + '_' + str(i) + '(p):\n' + '    ' + aspas   + p[1] + ' : ' + buf[len(buf)- i - 1][0] +'\n'
     p[0] += '\n'
     buf = []
+    
+def cleanText(text):
+    counter = 0
+    final = ''
+    lines = text.split('\n')
+    for line in lines:
+        counter += 1
+        final += line.replace('"', '', 1).replace('"', '', -1)
+        if counter != len(lines):
+            final +=  '\n'
+    return final
 
 def p_Elem1(p):
-    "Elem1 : TEXTA Action NEWL Elem2"
+    "Elem1 : TEXT Action NEWL Elem2"
     global buf
-    p[0] = p[1] + '"\n' + p[2]
-    buf.append(p[0])
-    p[0] = p[2] + p[4]
+    p[0] = ''
+    p[1] = cleanText(p[1])
+    if ('\n' in p[1]):
+        p[0] = p[1] + '"""\n'  + p[2]
+        buf.append((p[0], True))
+    else : 
+        p[0] = p[1] + '"\n' + p[2] 
+        buf.append((p[0], False))
+        
 
 def p_Elem2(p):
     "Elem2 : TAB BARRA Elem1"
-    p[0] = p[3]
+    p[0] = p[3].rsplit('"',1)[0]
 
 def p_Elem2_vazio(p):
     "Elem2 : "
@@ -308,7 +339,7 @@ def p_Action_vazio(p):
     p[0] = ''
     
 def p_CodeG(p):
-    "CodeG : TEXT CodeG2"
+    "CodeG : GCODE CodeG2"
     p[0] = '    ' + p[1] + p[2]
 
 def p_CodeG_vazio(p):

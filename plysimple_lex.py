@@ -2,12 +2,13 @@ import ply.lex as lex
 
 
 
-tokens = ['NEWL','PEL','TAB','INLEX','INYACC','PREC','GRAM','SETA','START','BARRA','CHAVE','CHAVD','LR','LIT','IG','EXP','EXPL','ID','DOISP','VIRG','RES','STA','EXC','INC','TOK','TEXT','TEXTA','CODE','ERROR','EOF','NLINE']
+tokens = ['NEWL','PEL','TAB','INLEX','INYACC','PREC','GRAM','SETA','START','BARRA','CHAVE','CHAVD','LR','LIT','IG','EXP','EXPL','ID','DOISP','VIRG','RES','STA','EXC','INC','TOK','TEXT','TEXTA','CODE','ERROR','EOF','NLINE','STATE', 'GCODE']
 
 states = (
     ('text','inclusive'),
     ('prec','inclusive'),
     ('gram','inclusive'),
+    ('gramT','inclusive')
 )
 
 t_ANY_ignore = ""
@@ -27,11 +28,11 @@ def t_IG(t):
     return t
 
 def t_RES(t):
-    r'%reserved\s*:'
+    r'%reserved\s*:[ ]*'
     return t
 
 def t_STA(t):
-    r'%states\s*:'
+    r'%states\s*:[ ]*'
     return t
 
 def t_LIT(t):
@@ -97,13 +98,11 @@ def t_gram_BARRA(t):
 	r'\|\s*'
 	return t
 
-def t_gram_CHAVE(t):
-	r'{\s*'
-	return t
+def t_ANY_STATE(t):
+    r'\s*\(\w+\)'
+    return t
 
-def t_gram_CHAVD(t):
-	r'\s*}'
-	return t
+
 
 
 def t_ANY_DOISP(t):
@@ -122,7 +121,7 @@ def t_text_TAB(t):
 
 
 def t_gram_ID(t):
-    r'[A-Z][a-zA-Z]+'
+    r'[A-Z][a-zA-Z_1-9]+'
     return t
 
 
@@ -151,22 +150,47 @@ def t_PEL(t):
     r'\''
     return t
 
-def t_gram_TEXTA(t):
-    r'(?:\")[^|](([^{}])|(\'{\')|(\'}\'))+(?:\")\s*'
-    pos = 0
-    for i in range(len(t.value)):
-        if t.value[len(t.value)-i-1] == '"':
-            pos = i
-            break
-    t.value = t.value[1:-pos-1]
+#def t_gram_TEXTA(t):
+#    r'(?:\")[^|](([^{}])|(\'{\')|(\'}\'))+(?:\")\s*'
+#    pos = 0
+#    for i in range(len(t.value)):
+#        if t.value[len(t.value)-i-1] == '"':
+#            pos = i
+#            break
+#    t.value = t.value[1:-pos-1]
+#    print("gram texta")
+#    return t
+
+
+def t_gram_CHAVE(t):
+    r'{\s*'
+    t.lexer.begin('gramT')
     return t
+
+def t_gram_CHAVD(t):
+	r'\s*}'
+	return t
+
+def t_gramT_GCODE(t):
+    r'([^{}"]|("([^"]|\\")*"))+({([^{}"]|("([^"]|\\")*"))*}([^{}"]|("([^"]|\\")*"))*)*'
+    t.lexer.begin('gram')
+    #print("gcode", t.value)
+    return t
+
 
 def t_gram_TEXT(t):
     r'[^|](([^{}])|(\'{\')|(\'}\'))+'
+    #print("text", t.value)
+    #print("gram text", t.value)
     return t
+
+
+
+
 
 def t_TEXT(t):
     r'.+'
+    #print("text", t.value)
     return t
 
 def t_ANY_error(t):
