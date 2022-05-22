@@ -2,7 +2,7 @@ import ply.lex as lex
 
 
 
-tokens = ['NEWL','PEL','TAB','INLEX','INYACC','PREC','GRAM','SETA','START','BARRA','CHAVE','CHAVD','LR','LIT','IG','EXP','EXPL','ID','DOISP','VIRG','RES','STA','EXC','INC','TOK','TEXT','TEXTA','CODE','ERROR','EOF','NLINE','STATE', 'GCODE']
+tokens = ['NEWL','TAB','INLEX','INYACC','PREC','GRAM','SETA','START','BARRA','CHAVE','CHAVD','LR','LIT','IG','EXP','EXPL','ID','DOISP','VIRG','RES','STA','EXC','INC','TOK','TEXT','CODE','ERROR','EOF','NLINE','STATE', 'GCODE']
 
 states = (
     ('text','inclusive'),
@@ -146,20 +146,6 @@ def t_EXP(t):
     r'\'(\\\'|[^\'])+\''
     return t
 
-def t_PEL(t):
-    r'\''
-    return t
-
-#def t_gram_TEXTA(t):
-#    r'(?:\")[^|](([^{}])|(\'{\')|(\'}\'))+(?:\")\s*'
-#    pos = 0
-#    for i in range(len(t.value)):
-#        if t.value[len(t.value)-i-1] == '"':
-#            pos = i
-#            break
-#    t.value = t.value[1:-pos-1]
-#    print("gram texta")
-#    return t
 
 
 def t_gram_CHAVE(t):

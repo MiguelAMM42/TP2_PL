@@ -15,7 +15,7 @@ def p_Ps(p):
         f.write(p[2])
     
 def p_Lex(p):
-    "Lex : INLEX NEWL Lit Ig Res States Tok Nline Eof Error  Code End"
+    "Lex : INLEX NEWL Lit Ig Res States Tok Nline Eof Error  Code "
     p[0] = 'import ply.lex as lex\n\n' + p[3] + '\n' + p[5]+ '\ntokens = ' + str(parser.ltok)
     if parser.hasReserved:
         p[0] += '+ list(reserved.values())'
@@ -208,14 +208,6 @@ def p_Error_vazio(p):
     parser.isCode = True
     p[0] = ''
 
-def p_End_enter(p):
-    "End : NEWL End"
-    
-def p_End_tab(p):
-    "End : TAB End"
-    
-def p_End_vazio(p):
-    "End : "
     
 def p_Codel(p):
     "Codel : TAB TEXT NEWL Codel"
