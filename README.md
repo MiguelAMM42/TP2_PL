@@ -8,7 +8,7 @@ Don't forget to check the documentation before using it. 😉
 
 You can also check our website where it is possible to run the application without having to clone this repository. Visit https://ply-simple.herokuapp.com!
 
-
+![](WebsiteExample/website.gif)
 
 ## Documentation
 This is the official documentation for PLY Simple.\
