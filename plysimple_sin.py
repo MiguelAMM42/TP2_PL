@@ -176,12 +176,10 @@ def p_Nline_vazio(p):
 
 def p_Eof(p):
     "Eof : EOF NEWL Codel"
-    #parser.isCode = True
     p[0] = 'def t_eof(t):\n' + p[3]
 
 def p_Eof_vazio(p):
     "Eof : "
-    #parser.isCode = True
     p[0] = ''
     
 

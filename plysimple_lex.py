@@ -160,14 +160,11 @@ def t_gram_CHAVD(t):
 def t_gramT_GCODE(t):
     r'([^{}"]|("([^"]|\\")*"))+({([^{}"]|("([^"]|\\")*"))*}([^{}"]|("([^"]|\\")*"))*)*'
     t.lexer.begin('gram')
-    #print("gcode", t.value)
     return t
 
 
 def t_gram_TEXT(t):
     r'[^|](([^{}])|(\'{\')|(\'}\'))+'
-    #print("text", t.value)
-    #print("gram text", t.value)
     return t
 
 
@@ -176,7 +173,6 @@ def t_gram_TEXT(t):
 
 def t_TEXT(t):
     r'.+'
-    #print("text", t.value)
     return t
 
 def t_ANY_error(t):
