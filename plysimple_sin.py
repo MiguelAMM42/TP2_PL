@@ -1,5 +1,6 @@
 import ply.yacc as yacc
 import sys
+import re
 from plysimple_lex import tokens
 
 halits = False
@@ -13,7 +14,7 @@ def p_Ps(p):
         f.write(p[1])
     with open('plySimpleOut_sin.py', 'w') as f:
         f.write(p[2])
-    #print(p[1])
+    print(p[1])
     #juntar os ficheiros
     
 def p_Lex(p):
@@ -417,12 +418,24 @@ parser.hasReserved = False
 parser.inYacc = False
 
 
+def limpa_espacos(texto):
+    final = ''
+    linhas = texto.split('\n')
+    for linha in linhas:
+        final += re.sub(r'^[ \t]+$', '', linha) + '\n'
+    #print(final)
+    return final
+
+
+
 #Read line from input and parse it
 import sys
 #for linha in sys.stdin:
 parser.success = True
-parser.parse(str(sys.stdin.read()))
-#if parser.success:
-#    #print("Frase válida: ")
-#else :
-#    print("Quem é este pokémon?... Põe uma frase que eu conheca sff!")
+text = str(sys.stdin.read())
+text = limpa_espacos(text)
+parser.parse(text)
+if not parser.success:   
+    print("Quem é este pokémon?... Põe uma frase que eu conheca sff!")
+    #print("Frase válida: ")
+    

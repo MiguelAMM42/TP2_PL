@@ -55,46 +55,46 @@ def t_INC(t):
     return t
 
 def t_TOK(t):
-    r'%tokens\s*:'
+    r'%tokens\s*:[ ]*'
     #print("ahhhhhhh tok", t.value)
     return t
 
 def t_ANY_CODE(t):
-    r'%code\s*:'
+    r'%code\s*:[ ]*'
     #print("ahhhhhh code", t.value)
     t.lexer.begin('INITIAL')
     return t
 
 def t_NLINE(t):
-    r'%new\sline\s*:'
+    r'%new\sline\s*:[ ]*'
     t.lexer.begin('text')
     #print("ahhhhhh nline", t.value)
     return t
 
 def t_ANY_ERROR(t):
-    r'%error\s*:'
+    r'%error\s*:[ ]*'
     t.lexer.begin('INITIAL')
     #print("ahhhhhh error", t.value)
     return t
 
 def t_EOF(t):  
-    r'%eof\s*:'
+    r'%eof\s*:[ ]*'
     #print("artur", t.value)
     return t
 
 def t_START(t):
-	r'%start\s*:'
+	r'%start\s*:[ ]*'
 	#print("ahhhhhhhhh start", t.value)
 	return t
 
 def t_PREC(t):
-	r'%prec\s*:'
+	r'%prec\s*:[ ]*'
 	t.lexer.begin('prec')
 	#print("ahhhhhhhhh prec", t.value,t.lexer.lexstate)
 	return t
 
 def t_GRAM(t):
-	r'%grammar\s*:'
+	r'%grammar\s*:[ ]*'
 	t.lexer.begin('gram')
 	#print("ahhhhhhhhh gram", t.value)
 	return t
@@ -135,7 +135,7 @@ def t_ANY_DOISP(t):
 
 def t_gram_TAB(t):
     r'\s+'
-    print("ahhhhhhhhhhhh tabg", t.value)
+    #print("ahhhhhhhhhhhh tabg", t.value)
     return t
 
 def t_text_TAB(t):
@@ -191,12 +191,12 @@ def t_gram_TEXTA(t):
             pos = i
             break
     t.value = t.value[1:-pos-1]
-    print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh atext", t.value,t.lexer.lexstate)
+    #print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh atext", t.value,t.lexer.lexstate)
     return t
 
 def t_gram_TEXT(t):
     r'[^|](([^{}])|(\'{\')|(\'}\'))+'
-    print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh gtext", t.value,t.lexer.lexstate)
+    #print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh gtext", t.value,t.lexer.lexstate)
     return t
 
 def t_TEXT(t):
