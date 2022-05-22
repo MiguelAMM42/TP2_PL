@@ -5,7 +5,6 @@ from plysimple_lex import tokens
 
 halits = False
 buf = []
-ordem = 0
 
 
 def p_Ps(p):
@@ -14,7 +13,7 @@ def p_Ps(p):
         f.write(p[1])
     with open('plySimpleOut_sin.py', 'w') as f:
         f.write(p[2])
-    print(p[1])
+    print(p[2])
     #juntar os ficheiros
     
 def p_Lex(p):
@@ -329,24 +328,18 @@ def p_Elem(p):
     "Elem : ID SETA Elem1"
     p[0] = ''
     global buf
-    global ordem
     for i in range(len(buf)) :
         p[0] += 'def p_' + p[1] + '_' + str(i) + '(p):\n' + '    "' + p[1] + ' : ' + buf[len(buf)- i - 1] + '\n'
     p[0] += '\n'
-    global nome
-    ordem = 0
     buf = []
-    nome = p[1]
    # p[0] = p[3]
    # print("53")
 
 def p_Elem1(p):
     "Elem1 : TEXTA Action NEWL Elem2"
     global buf
-    global ordem
     p[0] = p[1] + '"\n' + p[2]
     buf.append(p[0])
-    ordem += 1
     p[0] = p[2] + p[4]
     #print("54")
 
@@ -363,8 +356,6 @@ def p_Elem2_vazio(p):
 def p_Action(p):
     "Action : CHAVE CodeG CHAVD"
     global buf
-    global nome
-    global ordem
     p[0] = p[2]
     #print(buf)
    # p[0] = 'def t_' + nome + '_' + str(ordem) + '(t):\n' 
@@ -436,6 +427,6 @@ text = str(sys.stdin.read())
 text = limpa_espacos(text)
 parser.parse(text)
 if not parser.success:   
-    print("Quem é este pokémon?... Põe uma frase que eu conheca sff!")
+    print("Erro!")
     #print("Frase válida: ")
     
