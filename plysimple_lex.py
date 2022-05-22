@@ -15,135 +15,109 @@ t_ANY_ignore = ""
 
 def t_INLEX(t):
     r'%%LEX'
-    #print("ahhhhhhh inlex", t.value)
     return t
 
 def t_INYACC(t):
     r'%%YACC'
     t.lexer.begin('INITIAL')
-    #print("ahhhhhhh inyacc", t.value)
     return t
 
 def t_IG(t):
     r'%ignore'
-    #print("ahhhhh ig", t.value)
     return t
 
 def t_RES(t):
     r'%reserved\s*:'
-    #print("ahhhhhhh res", t.value)
     return t
 
 def t_STA(t):
     r'%states\s*:'
-    #print("ahhhhhhh sta", t.value)
     return t
 
 def t_LIT(t):
     r'%literals'
-    #print("ahhhhhhhhhh lit", t.value)
     return t
 
 def t_EXC(t):
     r'exclusive'
-    #print("ahhhhhhh exc", t.value)
     return t
 
 def t_INC(t):
     r'inclusive'
-    #print("ahhhhhh inc", t.value)
     return t
 
 def t_TOK(t):
     r'%tokens\s*:[ ]*'
-    #print("ahhhhhhh tok", t.value)
     return t
 
 def t_ANY_CODE(t):
     r'%code\s*:[ ]*'
-    #print("ahhhhhh code", t.value)
     t.lexer.begin('INITIAL')
     return t
 
 def t_NLINE(t):
     r'%new\sline\s*:[ ]*'
     t.lexer.begin('text')
-    #print("ahhhhhh nline", t.value)
     return t
 
 def t_ANY_ERROR(t):
     r'%error\s*:[ ]*'
     t.lexer.begin('INITIAL')
-    #print("ahhhhhh error", t.value)
     return t
 
 def t_EOF(t):  
     r'%eof\s*:[ ]*'
-    #print("artur", t.value)
     return t
 
 def t_START(t):
 	r'%start\s*:[ ]*'
-	#print("ahhhhhhhhh start", t.value)
 	return t
 
 def t_PREC(t):
 	r'%prec\s*:[ ]*'
 	t.lexer.begin('prec')
-	#print("ahhhhhhhhh prec", t.value,t.lexer.lexstate)
 	return t
 
 def t_GRAM(t):
 	r'%grammar\s*:[ ]*'
 	t.lexer.begin('gram')
-	#print("ahhhhhhhhh gram", t.value)
 	return t
 
 def t_ANY_SETA(t):
 	r'\s*->\s*'
-	#print("ahhhhhhhhhhhhhhh seta", t.value)
 	return t
 
 def t_ANY_NEWL(t):
     r'\n+'
     if t.lexer.lexstate != 'prec' and t.lexer.lexstate != 'gram':
-       # print(t.lexer.lexstate)
         t.lexer.begin('text')
-    #print("ahhhhhhhhhhhh newl", t.value)
     return t
 
 def t_gram_BARRA(t):
 	r'\|\s*'
-	#print("ahhhhhhhhhhhh barra", t.value)
 	return t
 
 def t_gram_CHAVE(t):
 	r'{\s*'
-	#print("ahhhhhhhhhhhh chavE", t.value)
 	return t
 
 def t_gram_CHAVD(t):
 	r'\s*}'
-	#print("ahhhhhhhhhhhh chavD", t.value)
 	return t
 
 
 def t_ANY_DOISP(t):
     r'\s*:\s*'
-    #print("ahhhhhh doisp", t.value,t.lexer.lexstate)
     return t
 
 def t_gram_TAB(t):
     r'\s+'
-    #print("ahhhhhhhhhhhh tabg", t.value)
     return t
 
 def t_text_TAB(t):
     r'\s+'
     if t.lexer.lexstate != 'gram' :
-        #print("DJFOISJFIODJFIOSDJFIOSDJFIODJSSIODFJIODSJFIOSDJIOJFDSIOFJO\n\n\n", t.lexer.lexstate)
         t.lexer.begin('INITIAL')
-    #print("ahhhhhhhhhhhh tab", t.value)
     return t
 
 
@@ -154,33 +128,27 @@ def t_gram_ID(t):
 
 def t_ANY_ID(t):
     r'[_A-Z]+'
-    #print("ahhhhhhh id", t.value)
     return t
 
 def t_prec_LR(t):
 	r'[a-z]+'
-	#print("ahhhhhhh lr", t.value)
 	return t
 
 
 def t_VIRG(t):
     r'\s*,\s*'
-    #print("ahhhhhh virg", t.value,t.lexer.lexstate)
     return t
 
 def t_EXPL(t):
     r'("(\\"|[^"])+")|(\[(\'(([^\'])|(\\[\'tn]))\',)*\'(([^\'])|(\\[\'tn]))\'\])'
-    #print("ahhhhhhh expl", t.value)
     return t
 
 def t_EXP(t):
     r'\'(\\\'|[^\'])+\''
-    #print("ahhhhhhhhh exp", t.value,t.lexer.lexstate)
     return t
 
 def t_PEL(t):
     r'\''
-    #print("ahhhhhhhhhh aspinha", t.value)
     return t
 
 def t_gram_TEXTA(t):
@@ -191,21 +159,17 @@ def t_gram_TEXTA(t):
             pos = i
             break
     t.value = t.value[1:-pos-1]
-    #print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh atext", t.value,t.lexer.lexstate)
     return t
 
 def t_gram_TEXT(t):
     r'[^|](([^{}])|(\'{\')|(\'}\'))+'
-    #print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh gtext", t.value,t.lexer.lexstate)
     return t
 
 def t_TEXT(t):
     r'.+'
-    #print("aaaaaaaaaaaaaaaaaaahhhhhhhhhhh text", t.value,t.lexer.lexstate)
     return t
 
 def t_ANY_error(t):
-   # print('Caráter ilegal: ', t.value[0])
     t.lexer.skip(1)
 
 lexer = lex.lex()
