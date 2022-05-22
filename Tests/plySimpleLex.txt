@@ -1,0 +1,215 @@
+%%LEX
+%states:
+inclusive:'text', 'prec', 'gram'
+%tokens:
+INLEX:'%%LEX'
+    return t
+
+IG: '%ignore'
+    return t
+
+RES: '%reserved\s*:[ ]*'
+    return t
+
+STA: '%states\s*:[ ]*'
+    return t
+
+LIT: '%literals'
+    return t
+
+EXC : 'exclusive'
+    return t
+
+INC : 'inclusive'
+    return t
+
+TOK : '%tokens\s*:[ ]*'
+    return t
+
+CODE : '%code\s*:[ ]*'(ANY)
+    t.lexer.begin('INITIAL')
+    return t
+
+NLINE : '%new line\s*:[ ]*'
+    t.lexer.begin('text')
+    return t
+
+ERROR : '%error\s*:[ ]*'(ANY)
+    t.lexer.begin('INITIAL')
+    return t
+
+EOF : '%eof\s*:[ ]*'
+    return t
+
+NEWL : '\n+'(ANY)
+    t.lexer.begin('text')
+    return t
+
+DOISP: '\s*:\s*'(ANY)
+    return t
+
+TAB : '\s+'(text)
+    t.lexer.begin('INITIAL')
+    return t
+
+STATE : '\(\w+\)'(ANY)
+    return t
+
+ID : '[_A-Z]+'(ANY)
+    return t
+
+VIRG : '\s*,\s*'
+    return t
+
+EXPL : '("(\\"|[^"])+")|(\[(\'(([^\'])|(\\[\'tn]))\',)*\'(([^\'])|(\\[\'tn]))\'\])'
+    return t
+
+EXP : '\'(\\\'|[^\'])+\''
+    return t
+
+PEL : '\''
+    return t
+
+TEXT : '.+'
+    return t
+
+
+%error:(ANY)
+    t.lexer.skip(1)
+
+%code:
+
+    lexer = lex.lex()
+
+
+%%YACC
+%grammar:
+
+Lex -> "INLEX NEWL Lit Ig Res States Tok Nline Error Eof Code" {p[0]  = 'import ply.lex as lex\n\n' + p[3] + '\ntokens = ' + str(parser.ltok)
+    if parser.hasReserved:
+        p[0] += '+ list(reserved.values())'
+    p[0] +=  '\n' + p[4] + '\n' + p[5] + '\n' + p[6] + '\n' + p[7] + '\n' + p[8] + '\n' + p[9] + '\n' + p[10] + '\n' + p[11] 
+    
+}
+
+Lit -> "LIT DOISP EXPL NEWL" {p[0] = "literals = " + p[3]
+    global halits
+    halits = True
+    }
+    |" " {p[0] = ''}
+
+Ig -> "IG DOISP EXP NEWL Defig" {p[0] = 't_ignore = ' + p[3] + '\n' + p[5]}
+    | " " {p[0] = ' '}
+
+Defig -> "ID DOISP EXP NEWL Defig" {p[0] = "t_ignore_" + p[1] + '=' + p[3] + '\n' + p[5]}
+    | " " {p[0] = ' '}
+
+Res -> "RES NEWL Defres" {parser.hasReserved = True
+    p[0] = "reserved = {\n" + p[3]}
+    | " " {p[0] = ' '}
+
+Defres -> "ID DOISP EXP NEWL Defres1" {p[0] = '    ' + p[3] + ' : \''  + p[1] + '\' ,\n' + p[5]}
+
+Defres1 -> "Defres" {p[0] = p[1]}
+    | " " {p[0] = "}\n"}
+
+States -> "STA NEWL States1" {p[0] = 'states = (' + p[3] + ')'}
+    | " " {p[0] = ' '}
+
+States1 -> "StaE StaI2" {p[0] = p[1] + p[2]}
+    | "StaI StaE2" {p[0] = p[1] + p[2]}
+
+StaE -> "EXC DOISP Lsta NEWL" {p[0] = ''
+    for elem in p[3]:
+        p[0] += '(' + elem + ' , \'exclusive\'),'}
+
+StaI -> "INC DOISP Lsta NEWL" {p[0] = ''
+    for elem in p[3]:
+        p[0] += '(' + elem + ' , \'inclusive\'),'}
+
+StaE2 -> "EXC DOISP Lsta NEWL" {p[0] = ''
+    for elem in p[3]:
+        p[0] += '(' + elem + ' , \'exclusive\'),'}
+        | " " {p[0] = ''}
+
+StaI2 -> "INC DOISP Lsta NEWL" {p[0] = ''
+    for elem in p[3]:
+        p[0] += '(' + elem + ' , \'inclusive\'),'}
+        | " " {p[0] = ''}
+
+Lsta -> "EXP Lsta1" {p[0] = [p[1]] + p[2]}
+
+Lsta1 -> "VIRG Lsta" {p[0] = p[2]}
+    |" " {p[0] = []}
+
+
+Tok -> "TOK NEWL Tokens" {p[0] = p[3]}
+
+Tokens -> "ID DOISP Ed State NEWL Codel Tokens" {p[0] = ''
+    if p[3][0] == True : #decorator
+        p[0] += '@TOKEN(' + p[3][1] + ')\n'
+    p[0] += 'def t_' + p[4] + p[1] + '(t):\n'
+    if p[3][0] == False :
+        p[0] += p[3][1] + '\n'
+    p[0] += p[6] + '\n' + p[7] + '\n'
+    parser.ltok.append(p[1])
+}
+    | " " {p[0] = ''}
+
+State -> "STATE" {p[0] = p[1][1:-1] + '_'}
+    | " " {p[0] = ''}
+
+Ed -> "EXP" {p[0] = (False, '    r' + p[1])}
+    | "ID" {p[0] = (True, p[1])}
+
+Nline -> "NLINE EXP NEWL Codel" {p[0] = 't_newline(t):\n    r\'' + p[2] + "'\n" + p[4]}
+    | " " {p[0] = ''}
+
+Eof -> "EOF NEWL Codel" {parser.isCode = True
+    p[0] = 't_eof(t):\n' + p[3]}
+    | " " {parser.isCode = True
+    p[0] = ''}
+
+
+Error -> "ERROR State NEWL Codel" {p[0] = 'def t_error(t):\n' + p[4]
+    parser.isCode = True
+}
+    | " " {parser.isCode = True
+    p[0] = ''}
+
+Code -> "CODE NEWL Codel" {parser.isCode = False
+    p[0] = p[3]}
+
+Codel -> "TAB TEXT NEWL Codel" {if parser.isCode:
+        p[0] =  p[1][:-4] + p[2] + '\n' + p[4]
+    else :
+        p[0] =  p[1] + p[2] + '\n' + p[4] }
+    | " "{p[0] = ''}
+
+
+
+%code:
+    import re
+    parser = yacc.yacc()
+    parser.ltok = []
+    parser.isCode = False
+    parser.hasReserved = False
+    halits = False
+
+    def limpa_espacos(texto):
+        final = ''
+        linhas = texto.split('\n')
+        for linha in linhas:
+            final += re.sub(r'^[ \t]+$', '', linha) + '\n'
+        return final
+
+
+
+    #Read line from input and parse it
+    import sys
+    parser.success = True
+    text = str(sys.stdin.read())
+    text = limpa_espacos(text)
+    parser.parse(text)
+    if not parser.success:   
+        print("Erro!")
